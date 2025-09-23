@@ -1,0 +1,38 @@
+@apiUrl = http://localhost:8081/notes
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoidGFza2luZXNlZUBhcmNhZGEuZmkiLCJuYW1lIjpudWxsLCJyb2xlIjoidXNlciIsImlhdCI6MTc1ODYyNTAyNCwiZXhwIjoxNzYxMjE3MDI0fQ.2zGTvFHXPiZiJTThsq_qslPItz9uKHD32_dXcpzB9VQ
+
+###
+
+### Hämta alla notes för inloggade usern
+GET {{apiUrl}}
+Authorization: Bearer {{token}}
+
+###
+
+### Skapa en ny note
+POST {{apiUrl}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "My first note",
+  "content": "This is some important content."
+}
+
+###
+
+### Updatera Note med id
+PUT {{apiUrl}}/9
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated note title",
+  "content": "Updated content for the note."
+}
+
+###
+
+### Radera note med id
+DELETE {{apiUrl}}/5
+Authorization: Bearer {{token}}
