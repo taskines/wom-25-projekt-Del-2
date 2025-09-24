@@ -5,22 +5,41 @@ const authorize = require("../middleware/authorize")
 const router = express.Router()
 const prisma = new PrismaClient()
 
-// Hämta alla notes för inloggade användare
+// Hämta alla notes för inloggad användare
 router.get("/", authorize, async (req, res) => {
   try {
     const userId = parseInt(req.authUser.sub)
+
     const notes = await prisma.note.findMany({
       where: { ownerId: userId },
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
     })
+
     res.json(notes)
   } catch (err) {
     console.error(err)
-    res.status(500).json({ msg: "Error fetching notes" })
+    res.status(500).json({ msg: "Error fetching notes", error: err.message })
   }
 })
 
-// POST skapa ny note
+// Hämta en specifik note
+router.get("/:id", authorize, async (req, res) => {
+  try {
+    const userId = parseInt(req.authUser.sub)
+    const noteId = parseInt(req.params.id)
+
+    const note = await prisma.note.findUnique({ where: { id: noteId } })
+    if (!note) return res.status(404).json({ msg: "Note not found" })
+    if (note.ownerId !== userId) return res.status(403).json({ msg: "Forbidden" })
+
+    res.json(note)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ msg: "Error fetching note", error: err.message })
+  }
+})
+
+// Skapa ny note
 router.post("/", authorize, async (req, res) => {
   try {
     const userId = parseInt(req.authUser.sub)
@@ -30,8 +49,16 @@ router.post("/", authorize, async (req, res) => {
       return res.status(400).json({ msg: "Title and content are required" })
     }
 
+    // Kontrollera att användaren finns
+    const userExists = await prisma.user.findUnique({ where: { id: userId } })
+    if (!userExists) return res.status(400).json({ msg: "User not found" })
+
     const note = await prisma.note.create({
-      data: { title, content, ownerId: userId }
+      data: {
+        title,
+        content,
+        ownerId: userId,
+      },
     })
 
     res.status(201).json(note)
@@ -41,7 +68,7 @@ router.post("/", authorize, async (req, res) => {
   }
 })
 
-// PUT updatera note 
+// Uppdatera note
 router.put("/:id", authorize, async (req, res) => {
   try {
     const userId = parseInt(req.authUser.sub)
@@ -55,7 +82,7 @@ router.put("/:id", authorize, async (req, res) => {
 
     const updated = await prisma.note.update({
       where: { id: noteId },
-      data: { title, content }
+      data: { title, content },
     })
 
     res.json(updated)

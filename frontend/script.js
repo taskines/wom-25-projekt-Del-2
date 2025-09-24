@@ -56,7 +56,7 @@ async function createNote(title, content) {
   const token = localStorage.getItem("jwt")
   const res = await fetch(apiUrl, {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`
     },
@@ -69,11 +69,11 @@ async function updateNote(id, title, content) {
   const token = localStorage.getItem("jwt")
   await fetch(`${apiUrl}/${id}`, {
     method: "PUT",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`
     },
-    body: JSON.stringify({ title, content })
+    body: JSON.stringify({ title, content }) 
   })
 }
 
@@ -106,18 +106,33 @@ function renderNotes() {
     div.className = "note"
     div.setAttribute("draggable", "true")
     div.dataset.id = note.id
+    div.style.backgroundColor = "#ffff88"
+     div.querySelectorAll("h3, textarea").forEach(el => {
+      el.addEventListener("dragover", e => e.stopPropagation())
+      el.addEventListener("drop", e => e.stopPropagation())
+    })
+    
 
     div.innerHTML = `
       <h3 contenteditable="true">${note.title}</h3>
       <textarea>${note.content}</textarea>
+      <input type="color" class="colorPicker" value="#ffff88" />
       <button class="deleteBtn">Delete</button>
     `
-    // Delete
-    div.querySelector(".deleteBtn").addEventListener("click", () => deleteNote(note.id))
 
-    // Update title/content on blur
     const h3 = div.querySelector("h3")
     const textarea = div.querySelector("textarea")
+    const colorPicker = div.querySelector(".colorPicker")
+
+    // Change color visually
+    colorPicker.addEventListener("input", () => {
+      div.style.backgroundColor = colorPicker.value
+    })
+
+    // Delete note
+    div.querySelector(".deleteBtn").addEventListener("click", () => deleteNote(note.id))
+
+    // Update title/content (persists to DB)
     h3.addEventListener("blur", () => updateNote(note.id, h3.textContent, textarea.value))
     textarea.addEventListener("blur", () => updateNote(note.id, h3.textContent, textarea.value))
 
@@ -130,13 +145,25 @@ function renderNotes() {
   })
 }
 
-// --- Drag over / drop ---
-notesBoard.addEventListener("dragover", e => e.preventDefault())
+notesBoard.addEventListener("dragover", e => {
+  e.preventDefault()
+})
+
 notesBoard.addEventListener("drop", e => {
   e.preventDefault()
+
   const id = e.dataTransfer.getData("text/plain")
   const noteDiv = document.querySelector(`[data-id='${id}']`)
+
+  // Get board-relative position
+  const boardRect = notesBoard.getBoundingClientRect()
+  const offsetX = e.clientX - boardRect.left
+  const offsetY = e.clientY - boardRect.top
+
   noteDiv.style.position = "absolute"
-  noteDiv.style.left = e.clientX - 100 + "px"
-  noteDiv.style.top = e.clientY - 50 + "px"
+  noteDiv.style.left = `${offsetX - noteDiv.offsetWidth / 2}px`
+  noteDiv.style.top = `${offsetY - noteDiv.offsetHeight / 2}px`
+
+  // Optional: bring dragged note to front
+  noteDiv.style.zIndex = "1000"
 })
