@@ -71,6 +71,58 @@ body {
   box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
+/* Signup Container */
+#signup-container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+#signup-container h2 {
+  color: #333;
+  margin-bottom: 30px;
+  font-weight: 600;
+  font-size: 2rem;
+}
+
+#signupForm input {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+#signupForm input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+#signupForm button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#signupForm button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
 /* Board Container */
 #board-container {
   background: rgba(255, 255, 255, 0.95);
@@ -319,4 +371,17 @@ body {
 #notesBoard {
   overflow: auto;
   max-height: 70vh;
+}
+.hidden {
+  display: none;
+}
+.note {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin: 10px;
+  border-radius: 6px;
+  width: 200px;
+  background-color: #ffff88; /* default fallback */
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  position: relative;
 }

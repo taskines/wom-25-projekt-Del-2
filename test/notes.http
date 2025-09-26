@@ -1,5 +1,5 @@
 @apiUrl = http://localhost:8081/notes
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoidGFza2luZXNlZUBhcmNhZGEuZmkiLCJuYW1lIjpudWxsLCJyb2xlIjoidXNlciIsImlhdCI6MTc1ODYyNTAyNCwiZXhwIjoxNzYxMjE3MDI0fQ.2zGTvFHXPiZiJTThsq_qslPItz9uKHD32_dXcpzB9VQ
+@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoidGFza2luZXNlZUBhcmNhZGEuZmkiLCJuYW1lIjpudWxsLCJyb2xlIjoidXNlciIsImlhdCI6MTc1ODcyNjgyMywiZXhwIjoxNzYxMzE4ODIzfQ.LCWF-QjtZ2BiBfOdtCH8OZJl37LSL8NlhrJh3ZkEIVs
 
 ###
 
@@ -10,19 +10,20 @@ Authorization: Bearer {{token}}
 ###
 
 ### Skapa en ny note
-POST {{apiUrl}}
+POST {{apiUrl}}/5
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "title": "My first note",
   "content": "This is some important content."
+
 }
 
 ###
 
 ### Updatera Note med id
-PUT {{apiUrl}}/9
+PUT {{apiUrl}}/
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
