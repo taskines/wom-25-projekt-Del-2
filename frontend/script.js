@@ -3,13 +3,32 @@ let notes = []
 
 // Elements
 const loginContainer = document.getElementById("login-container")
+const signupContainer = document.getElementById("signup-container")
 const boardContainer = document.getElementById("board-container")
+
 const loginForm = document.getElementById("loginForm")
+const signupForm = document.getElementById("signupForm")
 const createNoteForm = document.getElementById("createNoteForm")
 const notesBoard = document.getElementById("notesBoard")
 const logoutBtn = document.getElementById("logoutBtn")
 
-// --- AUTH ---
+const showSignup = document.getElementById("showSignup")
+const showLogin = document.getElementById("showLogin")
+
+// --- SWITCH LOGIN/SIGNUP ---
+showSignup.addEventListener("click", e => {
+  e.preventDefault()
+  loginContainer.classList.add("hidden")
+  signupContainer.classList.remove("hidden")
+})
+
+showLogin.addEventListener("click", e => {
+  e.preventDefault()
+  signupContainer.classList.add("hidden")
+  loginContainer.classList.remove("hidden")
+})
+
+// --- AUTH: LOGIN ---
 loginForm.addEventListener("submit", async e => {
   e.preventDefault()
   const email = document.getElementById("email").value
@@ -27,6 +46,31 @@ loginForm.addEventListener("submit", async e => {
       loginContainer.classList.add("hidden")
       boardContainer.classList.remove("hidden")
       loadNotes()
+    } else {
+      alert(data.msg)
+    }
+  } catch (err) {
+    console.error(err)
+  }
+})
+
+// --- AUTH: SIGNUP ---
+signupForm.addEventListener("submit", async e => {
+  e.preventDefault()
+  const email = document.getElementById("signupEmail").value
+  const password = document.getElementById("signupPassword").value
+
+  try {
+    const res = await fetch("http://localhost:8080/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    })
+    const data = await res.json()
+    if (res.ok) {
+      alert("Signup successful! Please login.")
+      signupContainer.classList.add("hidden")
+      loginContainer.classList.remove("hidden")
     } else {
       alert(data.msg)
     }
@@ -107,11 +151,6 @@ function renderNotes() {
     div.setAttribute("draggable", "true")
     div.dataset.id = note.id
     div.style.backgroundColor = "#ffff88"
-     div.querySelectorAll("h3, textarea").forEach(el => {
-      el.addEventListener("dragover", e => e.stopPropagation())
-      el.addEventListener("drop", e => e.stopPropagation())
-    })
-    
 
     div.innerHTML = `
       <h3 contenteditable="true">${note.title}</h3>
@@ -132,7 +171,7 @@ function renderNotes() {
     // Delete note
     div.querySelector(".deleteBtn").addEventListener("click", () => deleteNote(note.id))
 
-    // Update title/content (persists to DB)
+    // Update title/content
     h3.addEventListener("blur", () => updateNote(note.id, h3.textContent, textarea.value))
     textarea.addEventListener("blur", () => updateNote(note.id, h3.textContent, textarea.value))
 
@@ -164,6 +203,6 @@ notesBoard.addEventListener("drop", e => {
   noteDiv.style.left = `${offsetX - noteDiv.offsetWidth / 2}px`
   noteDiv.style.top = `${offsetY - noteDiv.offsetHeight / 2}px`
 
-  // Optional: bring dragged note to front
+  // Bring dragged note to front
   noteDiv.style.zIndex = "1000"
 })

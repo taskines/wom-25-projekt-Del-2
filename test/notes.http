@@ -1,5 +1,5 @@
 @apiUrl = http://localhost:8081/notes
-@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoidGFza2luZXNlZUBhcmNhZGEuZmkiLCJuYW1lIjpudWxsLCJyb2xlIjoidXNlciIsImlhdCI6MTc1ODcyNjgyMywiZXhwIjoxNzYxMzE4ODIzfQ.LCWF-QjtZ2BiBfOdtCH8OZJl37LSL8NlhrJh3ZkEIVs
+@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjExLCJlbWFpbCI6Impvcm1hQGdtYWlsLmNvbSIsIm5hbWUiOm51bGwsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU4ODcwMzkyLCJleHAiOjE3NjE0NjIzOTJ9.VJKWy7_bBzRpxAB-SoAj-s0mkf_vTbDqiIT1SFtp66c
 
 ###
 
@@ -10,7 +10,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### Skapa en ny note
-POST {{apiUrl}}/5
+POST {{apiUrl}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -20,10 +20,9 @@ Authorization: Bearer {{token}}
 
 }
 
-###
 
 ### Updatera Note med id
-PUT {{apiUrl}}/
+PUT {{apiUrl}}/2
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -35,5 +34,5 @@ Authorization: Bearer {{token}}
 ###
 
 ### Radera note med id
-DELETE {{apiUrl}}/5
+DELETE {{apiUrl}}/1
 Authorization: Bearer {{token}}

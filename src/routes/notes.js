@@ -8,10 +8,10 @@ const prisma = new PrismaClient()
 // Hämta alla notes för inloggad användare
 router.get("/", authorize, async (req, res) => {
   try {
-    const userId = parseInt(req.authUser.sub)
+    const userId = parseInt(req.authUser.sub, 10) //  från JWT
 
     const notes = await prisma.note.findMany({
-      where: { ownerId: userId },
+      where: { userId },
       orderBy: { createdAt: "desc" },
     })
 
@@ -25,12 +25,12 @@ router.get("/", authorize, async (req, res) => {
 // Hämta en specifik note
 router.get("/:id", authorize, async (req, res) => {
   try {
-    const userId = parseInt(req.authUser.sub)
-    const noteId = parseInt(req.params.id)
+    const userId = parseInt(req.authUser.sub, 10)
+    const noteId = parseInt(req.params.id, 10)
 
     const note = await prisma.note.findUnique({ where: { id: noteId } })
     if (!note) return res.status(404).json({ msg: "Note not found" })
-    if (note.ownerId !== userId) return res.status(403).json({ msg: "Forbidden" })
+    if (note.userId !== userId) return res.status(403).json({ msg: "Forbidden" })
 
     res.json(note)
   } catch (err) {
@@ -42,23 +42,19 @@ router.get("/:id", authorize, async (req, res) => {
 // Skapa ny note
 router.post("/", authorize, async (req, res) => {
   try {
-    const userId = parseInt(req.authUser.sub)
+    const userId =req.authUser.sub
     const { title, content } = req.body
 
     if (!title || !content) {
       return res.status(400).json({ msg: "Title and content are required" })
     }
 
-    // Kontrollera att användaren finns
-    const userExists = await prisma.user.findUnique({ where: { id: userId } })
-    if (!userExists) return res.status(400).json({ msg: "User not found" })
-
     const note = await prisma.note.create({
       data: {
         title,
         content,
-        ownerId: userId,
-      },
+        userId // direkt från JWT
+      }
     })
 
     res.status(201).json(note)
@@ -71,13 +67,13 @@ router.post("/", authorize, async (req, res) => {
 // Uppdatera note
 router.put("/:id", authorize, async (req, res) => {
   try {
-    const userId = parseInt(req.authUser.sub)
-    const noteId = parseInt(req.params.id)
+    const userId = parseInt(req.authUser.sub, 10)
+    const noteId = parseInt(req.params.id, 10)
     const { title, content } = req.body
 
     const existing = await prisma.note.findUnique({ where: { id: noteId } })
     if (!existing) return res.status(404).json({ msg: "Note not found" })
-    if (existing.ownerId !== userId)
+    if (existing.userId !== userId)
       return res.status(403).json({ msg: "Forbidden: Not your note" })
 
     const updated = await prisma.note.update({
@@ -95,12 +91,12 @@ router.put("/:id", authorize, async (req, res) => {
 // Radera note
 router.delete("/:id", authorize, async (req, res) => {
   try {
-    const userId = parseInt(req.authUser.sub)
-    const noteId = parseInt(req.params.id)
+    const userId = parseInt(req.authUser.sub, 10)
+    const noteId = parseInt(req.params.id, 10)
 
     const existing = await prisma.note.findUnique({ where: { id: noteId } })
     if (!existing) return res.status(404).json({ msg: "Note not found" })
-    if (existing.ownerId !== userId)
+    if (existing.userId !== userId)
       return res.status(403).json({ msg: "Forbidden: Not your note" })
 
     await prisma.note.delete({ where: { id: noteId } })
