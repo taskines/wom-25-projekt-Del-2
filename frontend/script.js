@@ -42,7 +42,7 @@ loginForm.addEventListener("submit", async e => {
     })
     const data = await res.json()
     if (res.ok) {
-      localStorage.setItem("jwt", data.jwt)
+      localStorage.setItem("jwt", data.accessToken)
       loginContainer.classList.add("hidden")
       boardContainer.classList.remove("hidden")
       loadNotes()
